@@ -3,40 +3,81 @@
 This Python script is designed to analyze a cryptocurrency token (a "memecoin") and determine if it exhibits characteristics of a honeypot. 
 Honeypot: A type of scam where users can buy but not sell the token. It does so by fetching data from the Dexscreener API, checking trading patterns, and applying various risk factors.
 
+
+```html
+<p align="center">
+  <img src="screenshot1.png" alt="image 1" width="45%" height="auto">
+  <img src="screenshot2.png" alt="image 2" width="45%" height="auto">
+</p>
+
+
 Steps involved in writing this script:
 
-Here’s a structured numeric breakdown of the code:
+# Token Honeypot Detection Script breakdown:
 
-1. Importing Dependencies
-  requests (for API calls)
-  datetime (for time calculations)
-2. Fetching Token Data
-  Function: get_memecoin_info(contract_address)
-  Sends API request to Dexscreener
-  Returns JSON data or None if request fails
-3. Calculating Risk Percentage
-  Function: calculate_risk_percentage(risk_factors)
-  Computes total risk weight
-  Ensures risk percentage does not exceed 100%
-4. Honeypot Detection Logic
-  4.1 Extracting Key Trading Data
-    Retrieves trading pairs
-    Fetches buy/sell transactions for 24h, 6h, 1h
-    Extracts liquidity, market cap, price change
-    Converts pair creation timestamp
-  4.2 Defining Risk Thresholds
-    Buy/Sell ratio thresholds
-    Liquidity and market cap thresholds
-    Recent token creation thresholds
-  4.3 Applying Risk Factors
-    Assigns weights based on suspicious activity
-    Flags new pairs, high buy/sell ratios, low liquidity, missing information
-  4.4 Final Risk Calculation
-    Calls calculate_risk_percentage(risk_factors)
-    If risk exists, returns an alert & risk percentage
-    Otherwise, returns safe token status
-5. Finally Running the Script
-  Accepts contract address input
-  Calls get_memecoin_info() to fetch data
-  Runs is_honeypot() for risk analysis
-  Prints honeypot warning or safe token message
+## 1. Importing Dependencies
+- `requests`: Used for making API calls.
+- `datetime`: Used for time-based calculations.
+
+## 2. Fetching Token Data
+- **Function:** `get_memecoin_info(contract_address)`
+- **Steps:**
+  1. Constructs the API URL using `contract_address`.
+  2. Sends a `GET` request to **Dexscreener API**.
+  3. If the response is **successful** (`status_code == 200`), return JSON data.
+  4. Otherwise, return `None`.
+
+## 3. Calculating Risk Percentage
+- **Function:** `calculate_risk_percentage(risk_factors)`
+- **Steps:**
+  1. Sum up all **risk factor weights**.
+  2. Normalize risk percentage to a **maximum of 100%**.
+  3. Return the calculated value.
+
+## 4. Honeypot Detection Logic
+
+### 4.1 Extracting Key Trading Data
+- Extracts:
+  - Buy/sell transactions for **24h, 6h, 1h**.
+  - **Liquidity, Market Cap, Price Change**.
+  - Pair creation timestamp.
+
+### 4.2 Defining Risk Thresholds
+- **Thresholds used to determine risk:**
+  - **Buy/Sell Ratio:**
+    - 24h: `2.2`
+    - 6h: `2.3`
+    - 1h: `2.5`
+  - **Liquidity Thresholds:**
+    - Minimum: `$10,000`
+    - Very Low: `$1,000`
+  - **Market Cap Conditions:**
+    - High-risk if above **$250M**.
+  - **Recent Pair Conditions:**
+    - Created in **last 2 hours** → Higher risk.
+
+### 4.3 Applying Risk Factors
+- **Checks different risk conditions:**
+  - If the **pair was created recently**, assign **30 points**.
+  - If the **buy/sell ratio is abnormal**, assign **10-20 points**.
+  - If **liquidity is low**, assign **5-10 points**.
+  - If **market cap is high but missing information**, assign **25 points**.
+
+### 4.4 Final Risk Calculation
+- **Steps:**
+  1. Call `calculate_risk_percentage(risk_factors)`.
+  2. If risk percentage > **0%**, generate an **alert**.
+  3. If no risk detected, mark the token as **safe**.
+
+## 5. Running the Script
+```python
+if __name__ == "__main__":
+    contract_address = input("Enter the memecoin contract address: ")
+    memecoin_info = get_memecoin_info(contract_address)
+
+    if memecoin_info:
+        alert, risk_percentage = is_honeypot(memecoin_info)
+        if alert:
+            print(alert)
+        else:
+            print("The token does not appear to be a hon
