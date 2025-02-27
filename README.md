@@ -3,13 +3,8 @@
 This Python script is designed to analyze a cryptocurrency token (a "memecoin") and determine if it exhibits characteristics of a honeypot. 
 Honeypot: A type of scam where users can buy but not sell the token. It does so by fetching data from the Dexscreener API, checking trading patterns, and applying various risk factors.
 
-
-```html
-<p align="center">
-  <img src="screenshot1.png" alt="image 1" width="45%" height="auto">
-  <img src="screenshot2.png" alt="image 2" width="45%" height="auto">
-</p>
-
+![image 1](screenshot1.png, width="45%" height="auto")
+![image 2](screenshot2.png)
 
 Steps involved in writing this script:
 
